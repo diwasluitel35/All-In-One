@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paragraph Analyzer</title>
+    <link href="https://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="glowing-text">Paragraph Analyzer</h1>
+            <p class="subtitle">AI-Powered Paragraph Analyzation System</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <select id="docType">
+                    <option value="" disabled selected>Select Paragraph Type</option>
+                    <option value="Lead">Lead</option>
+                    <option value="Position">Position</option>
+                    <option value="Claim">Claim</option>
+                    <option value="Counterclaim">Counterclaim</option>
+                    <option value="Rebuttal">Rebuttal</option>
+                    <option value="Evidence">Evidence</option>
+                    <option value="Concluding Statement">Concluding Statement</option>
+                </select>
+
+                <textarea id="textInput" placeholder="Enter paragraph to analyze..."></textarea>
+                
+                <button onclick="analyzeText()" id="analyzeBtn">
+                    <span id="btnText">Analyze Paragraph</span>
+                    <div class="loader" id="btnLoader"></div>
+                </button>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    Analysis Result
+                </h2>
+                <div class="summary-box" id="resultContent"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            const docType = document.getElementById('docType').value;
+            const btn = document.getElementById('analyzeBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+            const resultsDiv = document.getElementById('resultsSection');
+            const resultContent = document.getElementById('resultContent');
+
+            if (!text.trim()) {
+                alert("Please enter text.");
+                return;
+            }
+            if (!docType) {
+                alert("Please select a text type.");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.textContent = "Analyzing...";
+            loader.style.display = "inline-block";
+            resultsDiv.style.display = 'none';
+            resultContent.innerHTML = '';
+
+            try {
+                const response = await fetch('./analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, type: docType })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                resultContent.textContent = data.result;
+                resultsDiv.style.display = 'block';
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.style.display = 'block';
+                resultContent.innerHTML = `<div class="error-message">${error.message || "Error occurred."}</div>`;
+                
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = "Analyze Paragraph";
+                loader.style.display = "none";
+            }
+        }
+
+        document.getElementById('textInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeText();
+            }
+        });
+    </script>
+</body>
+</html>

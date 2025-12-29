@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Essay Scorer</title>
+    <link rel="stylesheet" href="{{ url_for('.static', filename='style.css') }}">
+    <link href="https://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet">
+</head>
+<body>          
+
+    <div class="container">
+        <header>
+            <h1 class="glowing-text">Automated Essay Scorer</h1>
+            <p class="subtitle">AI-Powered Writing Assessment</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <textarea id="essayInput" placeholder="Paste your essay here to analyze..."></textarea>
+                <button onclick="analyzeEssay()" id="analyzeBtn">Analyze Essay</button>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>Scoring Report</h2>
+                <div class="scores-grid" id="scoresGrid">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function analyzeEssay() {
+            const text = document.getElementById('essayInput').value;
+            const btn = document.getElementById('analyzeBtn');
+            const resultsDiv = document.getElementById('resultsSection');
+            const grid = document.getElementById('scoresGrid');
+
+            if (!text.trim()) {
+                alert("Please enter some text.");
+                return;
+            }
+
+            btn.textContent = "Analyzing...";
+            btn.disabled = true;
+            resultsDiv.style.display = 'none';
+            grid.innerHTML = '';
+
+            try {
+                const response = await fetch('./predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ essay: text })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    for (const [category, score] of Object.entries(data)) {
+                        const card = document.createElement('div');
+                        card.className = 'score-card';
+                        card.innerHTML = `
+                            <h3>${category}</h3>
+                            <div class="score-value">${score}</div>
+                        `;
+                        grid.appendChild(card);
+                    }
+                    resultsDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("An error occurred while connecting to the server.");
+            } finally {
+                btn.textContent = "Analyze Essay";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

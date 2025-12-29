@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Summarizer</title>
+    <link href="https://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="glowing-text">News Summarizer</h1>
+            <p class="subtitle">Summarize news articles instantly - Powered by AI</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <textarea id="newsInput" placeholder="Paste the news article here to summarize..."></textarea>
+                <button onclick="summarizeNews()" id="summarizeBtn">
+                    <span id="btnText">Summarize Article</span>
+                    <div class="loader" id="btnLoader"></div>
+                </button>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
+                    Summary Result
+                </h2>
+                <div class="summary-box" id="summaryContent"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function summarizeNews() {
+            const text = document.getElementById('newsInput').value;
+            const btn = document.getElementById('summarizeBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+            const resultsDiv = document.getElementById('resultsSection');
+            const summaryContent = document.getElementById('summaryContent');
+
+            if (!text.trim()) {
+                alert("Please enter some news text to summarize.");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.textContent = "Processing...";
+            loader.style.display = "inline-block";
+            resultsDiv.style.display = 'none';
+            summaryContent.innerHTML = '';
+
+            try {
+                const response = await fetch('./summarize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ news: text })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                summaryContent.textContent = data.summary;
+                resultsDiv.style.display = 'block';
+                
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.style.display = 'block';
+                summaryContent.innerHTML = `<div class="error-message">${error.message || "Unexpected error."}</div>`;
+                
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = "Summarize Article";
+                loader.style.display = "none";
+            }
+        }
+
+        document.getElementById('newsInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                summarizeNews();
+            }
+        });
+    </script>
+</body>
+</html>

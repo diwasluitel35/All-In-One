@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="background-glow"></div>
+
+    <main class="container">
+        <h1 class="title">AI SERVER</h1>
+        <p class="subtitle">Unified Gateway for AI Models</p>
+
+        <div class="grid">
+            <a href="/essay" class="card">
+                <h2>Automated Essay Scorer</h2>
+                <p>Evaluate and score written content intelligently</p>
+            </a>
+
+            <a href="/summarizer" class="card">
+                <h2>News Summarizer</h2>
+                <p>Condense news articles into clear insights</p>
+            </a>
+
+            <a href="/analyzer" class="card">
+                <h2>Paragraph Analyzer</h2>
+                <p>Analyze effectiveness of a paragraph</p>
+            </a>
+
+            <a href="/classifier" class="card">
+                <h2>Paragraph Classifier</h2>
+                <p>Classify paragraphs with intelligent systems</p>
+            </a>
+        </div>
+
+        <footer>
+            <span>Powered by Flask & AI Models</span>
+        </footer>
+    </main>
+
+</body>
+</html>

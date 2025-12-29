@@ -1,0 +1,8 @@
+flask
+torch
+transformers
+tensorflow
+huggingface_hub
+numpy
+sentencepiece
+scikit-learn

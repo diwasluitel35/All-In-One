@@ -1,0 +1,110 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #0a0f2c, #02040f 70%);
+    color: #e6f1ff;
+    overflow-x: hidden;
+}
+
+.background-glow {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(0, 170, 255, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 60%, rgba(0, 100, 255, 0.12), transparent 45%);
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 20px 40px;
+    text-align: center;
+}
+
+.title {
+    font-size: 4rem;
+    letter-spacing: 4px;
+    color: #8fd3ff;
+    text-shadow:
+        0 0 10px rgba(0, 180, 255, 0.8),
+        0 0 30px rgba(0, 140, 255, 0.6),
+        0 0 60px rgba(0, 100, 255, 0.4);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #9fb8d9;
+    margin-bottom: 60px;
+    font-size: 1.1rem;
+    opacity: 0.85;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: rgba(10, 20, 50, 0.55);
+    border: 1px solid rgba(120, 200, 255, 0.25);
+    border-radius: 18px;
+    padding: 30px 25px;
+    text-decoration: none;
+    color: #e6f1ff;
+    backdrop-filter: blur(12px);
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(120, 200, 255, 0.6),
+        transparent
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow:
+        0 0 25px rgba(0, 170, 255, 0.35),
+        0 0 60px rgba(0, 120, 255, 0.25);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card h2 {
+    margin-bottom: 12px;
+    color: #9fe0ff;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: #c6d9ef;
+    line-height: 1.5;
+}
+
+footer {
+    margin-top: 70px;
+    font-size: 0.85rem;
+    color: #7fa3c9;
+    opacity: 0.7;
+}
